@@ -5,7 +5,7 @@ import 'package:pixel_color_picker/pixel_color_picker.dart';
 
 import '../../utils/array_color.dart';
 
-/// width 1112, h 244
+/// width 1112 (57), h 244 (63,5)
 
 class HomeCubit extends Cubit<HomeState> {
 

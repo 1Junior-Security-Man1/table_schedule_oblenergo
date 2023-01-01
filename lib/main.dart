@@ -5,6 +5,8 @@ import 'home/home_page.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'home/widget/schedule_table.dart';
+
 void main() async{
 
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +36,7 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: Colors.blue,
       ),
       home: const HomePage(),
+      //home: const HomePage1(),
     );
   }
 }
