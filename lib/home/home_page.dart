@@ -16,6 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _repaintBoundaryKey = GlobalKey();
+
   late HomeCubit mainCubit;
 
   @override
@@ -26,27 +28,17 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  test() {
-    var d = 5;
-    for (var i = 0; i <= d; i++) {
-
-      print(i);
-
-      //print(firstColor);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var current = DateTime.now();
     return Scaffold(
+      key: _repaintBoundaryKey,
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add, size: 44),
         onPressed: ()  =>
-            test(),
-            // Navigator.of(context).push(PageRouteBuilder(
-            //     opaque: false,
-            //     pageBuilder: (context, _, __) => alertDialog(context))),
+            Navigator.of(context).push(PageRouteBuilder(
+                opaque: false,
+                pageBuilder: (context, _, __) => alertDialog(context))),
       ),
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -73,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: BlocBuilder<HomeCubit, HomeState>(
           builder: (context, state) {
-        return ScheduleTable(state: state);
+            return ScheduleTable(state: state);
       }),
     );
   }
