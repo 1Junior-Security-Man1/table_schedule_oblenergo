@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:table_schedule_oblenergo/helpers/local_storage.dart';
+import 'package:table_schedule_oblenergo/home/data/table_colors.dart';
 import 'package:table_schedule_oblenergo/home/widget/schedule_table.dart';
 import 'package:table_schedule_oblenergo/utils/alert_dialog.dart';
 import '../utils/array_color.dart';
@@ -17,7 +21,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _repaintBoundaryKey = GlobalKey();
-
+  TableColors tableColors = TableColors();
   late HomeCubit mainCubit;
 
   @override
@@ -25,6 +29,8 @@ class _HomePageState extends State<HomePage> {
     htmlParse();
     mainCubit = BlocProvider.of<HomeCubit>(context);
     mainCubit.fetchImage();
+    ///
+    //mainCubit.localData();
     super.initState();
   }
 
@@ -33,13 +39,13 @@ class _HomePageState extends State<HomePage> {
     var current = DateTime.now();
     return Scaffold(
       key: _repaintBoundaryKey,
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add, size: 44),
-        onPressed: ()  =>
-            Navigator.of(context).push(PageRouteBuilder(
-                opaque: false,
-                pageBuilder: (context, _, __) => alertDialog(context))),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   child: const Icon(Icons.add, size: 44),
+      //   onPressed: ()  =>
+      //       Navigator.of(context).push(PageRouteBuilder(
+      //           opaque: false,
+      //           pageBuilder: (context, _, __) => alertDialog(context))),
+      // ),
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),

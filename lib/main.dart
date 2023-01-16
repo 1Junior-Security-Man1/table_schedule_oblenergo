@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'helpers/local_notification.dart';
+import 'helpers/local_storage.dart';
 import 'home/cubit/home_cubit.dart';
 import 'home/home_page.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'home/widget/schedule_table.dart';
-
 void main() async{
+
+  LocalStorage localStorage = LocalStorage();
 
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -15,9 +16,10 @@ void main() async{
 
   tz.initializeTimeZones();
 
-  //runApp(const MyApp());
+  var currentData = '${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}';
+  //localStorage.saveData(currentData);
 
-  runApp(BlocProvider(create: (context) => HomeCubit(), child: const MyApp()),);
+  runApp(BlocProvider(create: (context) => HomeCubit(), child: const MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -27,7 +29,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

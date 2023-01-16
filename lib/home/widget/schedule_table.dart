@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import '../../utils/array_color.dart';
+import 'package:table_schedule_oblenergo/helpers/color_picker.dart';
+import 'package:table_schedule_oblenergo/home/widget/popup.dart';
+import 'package:table_schedule_oblenergo/utils/colors.dart';
 import '../cubit/home_state.dart';
-import 'package:pixel_color_picker/src/services/pixel_color_picker.dart';
-import 'dart:ui' as ui;
 
 class ScheduleTable extends StatefulWidget {
   final HomeState? state;
@@ -15,139 +14,105 @@ class ScheduleTable extends StatefulWidget {
 }
 
 class _ScheduleTableState extends State<ScheduleTable> {
-  Color? color;
 
-  List<Color> listColor = [];
+  showTableParams() {
+    if (widget.state!.textStatus == TextStatus.initial) {
+      return const CircularProgressIndicator();
+    } else if (widget.state!.textStatus == TextStatus.loading) {
+      return const CircularProgressIndicator();
+    } else {
+      return Text(
+          'There will be light: ${widget.state!.willBeLight},'
+          ' There will be no light: ${widget.state!.willBeNoLight}',
+          style: const TextStyle(fontSize: 16, color: Colors.white));
+    }
+  }
 
-  // var currentOffset;
-  //
-  // test() {
-  //   for (var i = 0; i < CellTable().firstLine.length; i++) {
-  //     var firstColor = CellTable().firstLine[i];
-  //     setState(() {
-  //       var offset = Offset(firstColor.x!.toDouble(), firstColor.x!.toDouble());
-  //       currentOffset = offset;
-  //     });
-  //   }
-  // }
+  showListView() {
+    if (widget.state!.listViewStatus == ListViewStatus.initial) {
+      return const CircularProgressIndicator();
+    } else if (widget.state!.listViewStatus == ListViewStatus.loading) {
+      return const CircularProgressIndicator();
+    } else {
+      return Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.end,
+          // crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Container(
+              height: 280,
+              child: ListView.builder(
+                scrollDirection: Axis.vertical,
+                //shrinkWrap: true,
+                itemCount: widget.state!.listColors.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return Card(
+                    color: AppColors.backgroundColor,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          height: 55,
+                          width: 155,
+                          color: Colors.grey[700],
+                          child: Center(
+                              child: Text(
+                                  "${widget.state!.listColors[index].endLight.toString()} - ${widget.state!.listColors[index].startLight.toString()}",
+                                  style: const TextStyle(color: Colors.white, fontSize: 25))),
+                        ),
+                        Container(
+                          height: 55,
+                          width: 155,
+                          color: Colors.grey[700],
+                          child: popupMenu(context),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+
+  // Future.delayed(const Duration(seconds: 1), () {
+  // mainCubit = BlocProvider.of<HomeCubit>(context);
+  // mainCubit.onInteract(_loadSnapshot);
+  // });
 
   @override
   Widget build(BuildContext context) {
-    //test();
-    if (widget.state?.status == MainStatus.loading) {
+    if (widget.state!.status == MainStatus.loading) {
       return const Center(
         child: CircularProgressIndicator(),
       );
     } else {
-      return Center(
-        child: PixelColorPickerTest(
-          onChanged: (color) {
-            setState(() {
-              this.color = color;
-              listColor.add(color);
-              print(color);
-            });
-          },
-          // child: Image.network(widget.state!.imageUrl, loadingBuilder: (context, child, loadingProgress) {
-          //   if (loadingProgress == null) return child;
-          //   return const Center(child: Text('Loading...'));
-          //   },
-          // ),
-          child: Image.asset('assets/gr_251222.png'),
+      return
+        Padding(
+        padding: const EdgeInsets.only(top: 255.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            showTableParams(),
+            CurrentPixelColorPicker(
+              child: Image.network(widget.state!.imageUrl,
+                // loadingBuilder: (context, child, loadingProgress) {
+                // if (loadingProgress == null) return child;
+                // return const Center(child: Text('Loading...', style: TextStyle(color: Colors.white),));
+                //},
+              ),
+              //child: Image.asset('assets/gr_251222.png'),
+            ),
+            showListView(),
+          ],
         ),
       );
     }
-  }
-}
-
-class PixelColorPickerTest extends StatefulWidget {
-  final Widget child;
-  final Function(Color color) onChanged;
-
-  PixelColorPickerTest({
-    Key? key,
-    required this.child,
-    required this.onChanged,
-  }) : super(key: key);
-
-  @override
-  _PixelColorPickerTestState createState() => _PixelColorPickerTestState();
-}
-
-class _PixelColorPickerTestState extends State<PixelColorPickerTest> {
-  ColorPicker? _colorPicker;
-
-  final _repaintBoundaryKey = GlobalKey();
-
-  Future<ui.Image> _loadSnapshot() async {
-    final RenderRepaintBoundary _repaintBoundary =
-    _repaintBoundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
-
-    final _snapshot = await _repaintBoundary.toImage();
-
-    return _snapshot;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Future.delayed(const Duration(seconds: 1), () {
-      _onInteract();
-    });
-    //_onInteract();
-    return Stack(
-      children: [
-        RepaintBoundary(
-          key: _repaintBoundaryKey,
-          child: Stack(
-            children: [
-              widget.child,
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  _onInteract() async {
-    Offset? currentOffset;
-    int i1 = 0;
-    // if (i1 == CellTable().firstLine.length) {
-    if (i1 == 23) {
-      return;
-    } else {
-      for (var i = 0; i < CellTable().firstLine.length; i++) {
-        i1 = i;
-        var firstColor = CellTable().firstLine[i];
-
-        setState(() {
-          var _offset = Offset(firstColor.x!.toDouble(), firstColor.y!.toDouble());
-          currentOffset = _offset;
-        });
-
-        print(currentOffset);
-
-        if (_colorPicker == null) {
-          final _snapshot = await _loadSnapshot();
-
-          final _imageByteData = await _snapshot.toByteData(format: ui.ImageByteFormat.png);
-
-          final _imageBuffer = _imageByteData!.buffer;
-
-          final _uint8List = _imageBuffer.asUint8List();
-
-          _colorPicker = ColorPicker(bytes: _uint8List);
-
-          _snapshot.dispose();
-        }
-        final _localOffset = currentOffset!;
-
-        final _color = await _colorPicker!.getColor(pixelPosition: _localOffset);
-
-        //print(_color);
-
-        widget.onChanged(_color);
-      }
-    }
-    return;
   }
 }
