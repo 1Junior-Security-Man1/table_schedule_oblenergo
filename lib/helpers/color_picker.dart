@@ -4,6 +4,11 @@ import 'dart:ui' as ui;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../home/cubit/home_cubit.dart';
 
+/// 1 (58.5)
+/// 2 (60)
+/// 3
+
+
 class CurrentPixelColorPicker extends StatefulWidget {
   final Widget child;
 
@@ -17,7 +22,6 @@ class CurrentPixelColorPicker extends StatefulWidget {
 }
 
 class _CurrentPixelColorPickerState extends State<CurrentPixelColorPicker> {
-
   late HomeCubit mainCubit;
   final _repaintBoundaryKey = GlobalKey();
 
@@ -29,7 +33,7 @@ class _CurrentPixelColorPickerState extends State<CurrentPixelColorPicker> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {    //2
     Future.delayed(const Duration(seconds: 2), () {
       mainCubit = BlocProvider.of<HomeCubit>(context);
       mainCubit.onInteract(_loadSnapshot);

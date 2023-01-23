@@ -37,8 +37,6 @@ class _ScheduleTableState extends State<ScheduleTable> {
       return Padding(
         padding: const EdgeInsets.all(5.0),
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.end,
-          // crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Container(
               height: 280,

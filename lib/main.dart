@@ -8,16 +8,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() async{
 
-  LocalStorage localStorage = LocalStorage();
-
   WidgetsFlutterBinding.ensureInitialized();
 
   NotificationService().initializePlatformNotifications();
 
   tz.initializeTimeZones();
-
-  var currentData = '${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}';
-  //localStorage.saveData(currentData);
 
   runApp(BlocProvider(create: (context) => HomeCubit(), child: const MyApp()));
 }

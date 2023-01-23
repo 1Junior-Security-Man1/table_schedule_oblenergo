@@ -1,11 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:table_schedule_oblenergo/helpers/local_storage.dart';
 import 'package:table_schedule_oblenergo/home/data/table_colors.dart';
 import 'package:table_schedule_oblenergo/home/widget/schedule_table.dart';
-import 'package:table_schedule_oblenergo/utils/alert_dialog.dart';
-import '../utils/array_color.dart';
 import '../utils/colors.dart';
 import 'cubit/home_cubit.dart';
 import 'cubit/home_state.dart';
@@ -23,14 +19,14 @@ class _HomePageState extends State<HomePage> {
   final _repaintBoundaryKey = GlobalKey();
   TableColors tableColors = TableColors();
   late HomeCubit mainCubit;
+  LocalStorage localStorage = LocalStorage();
 
   @override
   void initState() {
+    var currentData = '${DateTime.now().day}.${DateTime.now().month}.${DateTime.now().year}';
     htmlParse();
     mainCubit = BlocProvider.of<HomeCubit>(context);
-    mainCubit.fetchImage();
-    ///
-    //mainCubit.localData();
+    mainCubit.fetchImage(currentData);
     super.initState();
   }
 
@@ -39,13 +35,6 @@ class _HomePageState extends State<HomePage> {
     var current = DateTime.now();
     return Scaffold(
       key: _repaintBoundaryKey,
-      // floatingActionButton: FloatingActionButton(
-      //   child: const Icon(Icons.add, size: 44),
-      //   onPressed: ()  =>
-      //       Navigator.of(context).push(PageRouteBuilder(
-      //           opaque: false,
-      //           pageBuilder: (context, _, __) => alertDialog(context))),
-      // ),
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),

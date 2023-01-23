@@ -1,22 +1,26 @@
 import 'dart:ui';
 
+///1 (40)
+///2 (53.5)
+///3 (65.3)
+///4 (80)
+
 class ArrayColor{
   num? x;
   num? y;
-  Color? currentColor;
 
-  ArrayColor ({this.x, this.y, this.currentColor});
+  ArrayColor ({this.x, this.y,});
 
   ArrayColor firstLine({int? width, int? height, Color? currentColor}){
     return ArrayColor(
         x: width ?? this.x,
         y: height ?? this.y,
-        currentColor: currentColor ?? this.currentColor
     );
   }
 }
 
 class CellTable{
+  num? y;
   List<ArrayColor> firstLine = [
     ArrayColor(x: 59.6, y: 64.5,),
     ArrayColor(x: 75, y: 64.5,),

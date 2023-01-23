@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui' as ui;
 import 'package:table_schedule_oblenergo/home/cubit/home_state.dart';
 import 'package:bloc/bloc.dart';
@@ -18,56 +17,99 @@ class HomeCubit extends Cubit<HomeState> {
   LocalStorage localStorage = LocalStorage();
   int light = 0, noLight = 0;
   List<TableColors> list = [];
+  bool offlineMode = false;
 
   HomeCubit() : super(const HomeState());
 
-  fetchImage() {
+  // localData() async{
+  //   var readData = await localStorage.readData();
+  //   print(readData.toString());
+  // }
+
+  fetchImage(String currentData) async{
     emit(state.copyWith(status: MainStatus.loading));
-    return htmlParse().then((value) {
+    var readData = await localStorage.readData();
+    if(readData == null || readData == "" && currentData != readData){
+      return htmlParse().then((value) {
+        emit(state.copyWith(
+          status: MainStatus.complete,
+          imageUrl: value,
+        ));
+        localStorage.saveData(currentData);
+      }).catchError((Object obj) {
+        print('Error: $obj');
+      });
+    }else{
+      offlineMode = true;
       emit(state.copyWith(
         status: MainStatus.complete,
-        imageUrl: value,
+        ///
+        //imageUrl: value,
       ));
-    }).catchError((Object obj) {
-      print('Error: $obj');
-    });
+      return;
+    }
+    // return htmlParse().then((value) async {
+    //   var readData = await localStorage.readUrl();
+    //   if(value == readData && value == null || readData == null){
+    //     offAlgorithm = true;
+    //     emit(state.copyWith(
+    //       status: MainStatus.complete,
+    //       imageUrl: readData,
+    //     ));
+    //     return;
+    //   }else{
+    //     emit(state.copyWith(
+    //       status: MainStatus.complete,
+    //       imageUrl: value,
+    //     ));
+    //     localStorage.saveUrl(value);
+    //     return;
+    //   }
+    // }).catchError((Object obj) {
+    //   print('Error: $obj');
+    // });
   }
 
   onInteract(Function() _loadSnapshot) async {
     emit(state.copyWith(textStatus: TextStatus.loading));
-    Offset? currentOffset;
-    int i1 = 0;
-    List<int> allColors = [];
-    if (off == true) {
-      return;
-    } else {
-      for (i1; i1 <= CellTable().firstLine.length -1; i1++) {
-        var currentColor = CellTable().firstLine[i1];
-        var _offset = Offset(currentColor.x!.toDouble(), currentColor.y!.toDouble());
-        currentOffset = _offset;
-        print(currentOffset);
-        if (_colorPicker == null) {
-          final _snapshot = await _loadSnapshot();
-          final _imageByteData = await _snapshot.toByteData(format: ui.ImageByteFormat.png);
-          final _imageBuffer = _imageByteData!.buffer;
-          final _uint8List = _imageBuffer.asUint8List();
-          _colorPicker = ColorPicker(bytes: _uint8List);
-          _snapshot.dispose();
+    if(offlineMode == true){
+      emit(state.copyWith(textStatus: TextStatus.complete, willBeLight: light.toString(), willBeNoLight: noLight.toString()));
+    }else{
+      emit(state.copyWith(textStatus: TextStatus.loading));
+      Offset? currentOffset;
+      int i1 = 0;
+      List<int> allColors = [];
+      if (off == true) {
+        return;
+      } else {
+        for (i1; i1 <= CellTable().firstLine.length -1; i1++) {
+          var currentColor = CellTable().firstLine[i1];
+          var _offset = Offset(currentColor.x!.toDouble(), currentColor.y!.toDouble());
+          currentOffset = _offset;
+          print(currentOffset);
+          if (_colorPicker == null) {
+            final _snapshot = await _loadSnapshot();
+            final _imageByteData = await _snapshot.toByteData(format: ui.ImageByteFormat.png);
+            final _imageBuffer = _imageByteData!.buffer;
+            final _uint8List = _imageBuffer.asUint8List();
+            _colorPicker = ColorPicker(bytes: _uint8List);
+            _snapshot.dispose();
+          }
+          final _localOffset = currentOffset;
+          final _color = await _colorPicker!.getColor(pixelPosition: _localOffset);
+          colorTableList.add(_color.value);
+          print(_color.value);
+          if(i1 >= 23){
+            _lightValue(allColors);
+            //currentTableColors.colorTableList = colorTableList;
+            // if(colorTableList.isNotEmpty){
+            //   localStorage.getTableColor(jsonEncode(colorTableList.toString()));
+            // }
+            return off = true;
+          }
         }
-        final _localOffset = currentOffset;
-        final _color = await _colorPicker!.getColor(pixelPosition: _localOffset);
-        colorTableList.add(_color.value);
-        print(_color.value);
-        if(i1 >= 23){
-          _lightValue(allColors);
-          //currentTableColors.colorTableList = colorTableList;
-          // if(colorTableList.isNotEmpty){
-          //   localStorage.getTableColor(jsonEncode(colorTableList.toString()));
-          // }
-          return off = true;
-        }
-      }
-    }isClosed;
+      }isClosed;
+    }
     return;
   }
   _lightValue(List<int> allColors){
@@ -122,6 +164,7 @@ class HomeCubit extends Cubit<HomeState> {
         ///
         emit(state.copyWith(listViewStatus: ListViewStatus.complete, listColors: list));
         ///
+        localStorage.getListParam(endLightObj);
       }
     }
   }
